@@ -3,23 +3,29 @@ package com.company;
 import java.math.BigDecimal;
 
 public class Transaction {
-    private String fromAccount;
-    private String toAccount;
+    private Account fromAccount;
+    private Account toAccount;
     private BigDecimal amount;
 
-    public String getFromAccount() {
+    public Transaction(Account fromAccount, Account toAccount, BigDecimal amount) {
+        this.fromAccount = fromAccount;
+        this.toAccount = toAccount;
+        this.amount = amount;
+    }
+
+    public Account getFromAccount() {
         return this.fromAccount;
     }
 
-    public void setFromAccount(String fromAccount) {
+    public void setFromAccount(Account fromAccount) {
         this.fromAccount = fromAccount;
     }
 
-    public String getToAccount() {
+    public Account getToAccount() {
         return this.toAccount;
     }
 
-    public void setToAccount(String toAccount) {
+    public void setToAccount(Account toAccount) {
         this.toAccount = toAccount;
     }
 

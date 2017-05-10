@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.concurrent.Semaphore;
 
 public class Account {
-    private Semaphore isAvailable = new Semaphore(1, true);
+    private Semaphore semaphore = new Semaphore(1, true);
     private int accountId;
     private String ownerName;
     private BigDecimal availableAmount;
@@ -30,11 +30,8 @@ public class Account {
         this.availableAmount = availableAmount;
     }
 
-    public Semaphore getIsAvailable() {
-        return this.isAvailable;
+    public Semaphore getSemaphore() {
+        return this.semaphore;
     }
 
-    public synchronized void setIsAvailable(Semaphore isAvailable) {
-        this.isAvailable = isAvailable;
-    }
 }
