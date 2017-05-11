@@ -44,7 +44,7 @@ public class TransactionManagerTask implements Runnable {
                     continue;
                 }
                 System.out.println("Acquiring lock in thread: " + t.getName() + "\nOn account id: " + account.getAccountId() + "\n");
-                System.out.println("Thread: " + t.getName() + "\n" + "Counter: " + Main.counter.decrementAndGet());
+                System.out.println("Thread: " + t.getName() + "\n" + "Counter: " + Main.counter.getAndDecrement());
                 notAcquired = false;
             } catch (InterruptedException e) {
                 e.printStackTrace();

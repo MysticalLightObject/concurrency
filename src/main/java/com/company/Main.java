@@ -14,8 +14,8 @@ public class Main {
     public static void main(String[] args) {
         AccountManager am = new AccountManager();
         ArrayList<Account> accountsList = am.getAccounts();
-        ExecutorService es = Executors.newFixedThreadPool(8);
-        for (int i = counter.get(); i > 0; i--) {
+        ExecutorService es = Executors.newFixedThreadPool(2);
+        while (counter.get() > 0) {
             es.execute(new TransactionManagerTask(accountsList));
         }
         es.shutdown();
