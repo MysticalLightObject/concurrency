@@ -13,7 +13,7 @@ public class TransactionManagerTask implements Runnable {
         this.accounts = accounts;
     }
 
-    public synchronized void perform() {
+    public void perform() {
         t = Thread.currentThread();
         if (Main.counter.get() == 0) {
             return;
@@ -22,14 +22,14 @@ public class TransactionManagerTask implements Runnable {
         Account acc1 = getRandomAvailableAccount();
         Account acc2 = getRandomAvailableAccount();
 
-        AccountsAndAmounts accountsAndAmount = getAvailableMoneyToTransfer(acc1, acc2);
-        Transaction transaction = performTranscation(accountsAndAmount);
+        Transaction transaction = getAvailableMoneyToTransfer(acc1, acc2);
+        performTranscation(transaction);
 
         acc1.getSemaphore().release();
         acc2.getSemaphore().release();
     }
 
-    private Account getRandomAvailableAccount() {
+    private synchronized Account getRandomAvailableAccount() {
         int size = accounts.size();
         Account account = null;
 
@@ -52,37 +52,36 @@ public class TransactionManagerTask implements Runnable {
 
         }
 
-
         return account;
     }
 
-    private AccountsAndAmounts getAvailableMoneyToTransfer(
+    private Transaction getAvailableMoneyToTransfer(
             Account acc1,
             Account acc2
     ) {
         int randomAccountNumber = ThreadLocalRandom.current().nextInt(0, 1);
         BigDecimal random = new BigDecimal(Math.random());
-        AccountsAndAmounts accountsAndAmounts = new AccountsAndAmounts();
+        Transaction transaction = new Transaction();
 
         if (randomAccountNumber == 0) {
-            accountsAndAmounts.setAccountTo(acc1);
-            accountsAndAmounts.setAccountFrom(acc2);
-            accountsAndAmounts.setAmountToTransfer(random.multiply(acc1.getAvailableAmount()));
-            return accountsAndAmounts;
+            transaction.setToAccount(acc1);
+            transaction.setFromAccount(acc2);
+            transaction.setAmount(random.multiply(acc1.getAvailableAmount()));
+            return transaction;
         } else {
-            accountsAndAmounts.setAccountTo(acc2);
-            accountsAndAmounts.setAccountFrom(acc1);
-            accountsAndAmounts.setAmountToTransfer(random.multiply(acc2.getAvailableAmount()));
-            return accountsAndAmounts;
+            transaction.setToAccount(acc2);
+            transaction.setFromAccount(acc1);
+            transaction.setAmount(random.multiply(acc2.getAvailableAmount()));
+            return transaction;
         }
     }
 
     private Transaction performTranscation(
-            AccountsAndAmounts accountFromAndAmount
+            Transaction transaction
     ) {
-        Account accountFrom = accountFromAndAmount.getAccountFrom();
-        Account accountTo = accountFromAndAmount.getAccountTo();
-        BigDecimal amountToTransfer = accountFromAndAmount.getAmountToTransfer();
+        Account accountFrom = transaction.getFromAccount();
+        Account accountTo = transaction.getToAccount();
+        BigDecimal amountToTransfer = transaction.getAmount();
         accountFrom.setAvailableAmount(accountFrom.getAvailableAmount().subtract(amountToTransfer));
         accountTo.setAvailableAmount(accountTo.getAvailableAmount().add(amountToTransfer));
 
@@ -95,32 +94,3 @@ public class TransactionManagerTask implements Runnable {
     }
 }
 
-class AccountsAndAmounts {
-    private Account accountFrom;
-    private Account accountTo;
-    private BigDecimal amountToTransfer;
-
-    public BigDecimal getAmountToTransfer() {
-        return amountToTransfer;
-    }
-
-    public void setAmountToTransfer(BigDecimal amountToTransfer) {
-        this.amountToTransfer = amountToTransfer;
-    }
-
-    public Account getAccountTo() {
-        return accountTo;
-    }
-
-    public void setAccountTo(Account account) {
-        this.accountTo = account;
-    }
-
-    public Account getAccountFrom() {
-        return accountFrom;
-    }
-
-    public void setAccountFrom(Account accountFrom) {
-        this.accountFrom = accountFrom;
-    }
-}

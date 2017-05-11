@@ -13,6 +13,10 @@ public class Transaction {
         this.amount = amount;
     }
 
+    public Transaction() {
+
+    }
+
     public Account getFromAccount() {
         return this.fromAccount;
     }
