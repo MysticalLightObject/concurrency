@@ -15,9 +15,11 @@ public class TransactionManagerTask implements Runnable {
 
     public void perform() {
         t = Thread.currentThread();
-        if (Main.counter.get() == 0) {
+        if (Main.counter.get() <= 0) {
             return;
         }
+        int andDecrement = Main.counter.getAndDecrement();
+        System.out.println("Thread: " + t.getName() + "\n" + "Counter: " + andDecrement);
 
         Account acc1 = getRandomAvailableAccount();
         Account acc2 = getRandomAvailableAccount();
@@ -44,7 +46,6 @@ public class TransactionManagerTask implements Runnable {
                     continue;
                 }
                 System.out.println("Acquiring lock in thread: " + t.getName() + "\nOn account id: " + account.getAccountId() + "\n");
-                System.out.println("Thread: " + t.getName() + "\n" + "Counter: " + Main.counter.getAndDecrement());
                 notAcquired = false;
             } catch (InterruptedException e) {
                 e.printStackTrace();
