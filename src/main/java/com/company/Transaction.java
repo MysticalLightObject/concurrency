@@ -6,11 +6,22 @@ public class Transaction {
     private Account fromAccount;
     private Account toAccount;
     private BigDecimal amount;
+    private String uuid;
 
-    public Transaction(Account fromAccount, Account toAccount, BigDecimal amount) {
+    public String getId() {
+        return uuid;
+    }
+
+    public Transaction(
+            Account fromAccount,
+            Account toAccount,
+            BigDecimal amount,
+            String uuid
+    ) {
         this.fromAccount = fromAccount;
         this.toAccount = toAccount;
         this.amount = amount;
+        this.uuid = uuid;
     }
 
     public Transaction() {

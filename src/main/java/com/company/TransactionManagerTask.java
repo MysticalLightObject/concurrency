@@ -3,6 +3,7 @@ package com.company;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TransactionManagerTask implements Runnable {
@@ -19,7 +20,7 @@ public class TransactionManagerTask implements Runnable {
             return;
         }
         int andDecrement = Main.counter.getAndDecrement();
-        System.out.println("Thread: " + t.getName() + "\n" + "Counter: " + andDecrement);
+        System.out.println("Counter: " + andDecrement);
 
         Account acc1 = getRandomAvailableAccount();
         Account acc2 = getRandomAvailableAccount();
@@ -45,7 +46,6 @@ public class TransactionManagerTask implements Runnable {
                 } else {
                     continue;
                 }
-                System.out.println("Acquiring lock in thread: " + t.getName() + "\nOn account id: " + account.getAccountId() + "\n");
                 notAcquired = false;
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -65,13 +65,13 @@ public class TransactionManagerTask implements Runnable {
         Transaction transaction = new Transaction();
 
         if (randomAccountNumber == 0) {
-            transaction.setToAccount(acc1);
-            transaction.setFromAccount(acc2);
+            transaction.setFromAccount(acc1);
+            transaction.setToAccount(acc2);
             transaction.setAmount(random.multiply(acc1.getAvailableAmount()));
             return transaction;
         } else {
-            transaction.setToAccount(acc2);
-            transaction.setFromAccount(acc1);
+            transaction.setFromAccount(acc2);
+            transaction.setToAccount(acc1);
             transaction.setAmount(random.multiply(acc2.getAvailableAmount()));
             return transaction;
         }
@@ -80,13 +80,14 @@ public class TransactionManagerTask implements Runnable {
     private Transaction performTranscation(
             Transaction transaction
     ) {
+        String transactionUUID = UUID.randomUUID().toString();
         Account accountFrom = transaction.getFromAccount();
         Account accountTo = transaction.getToAccount();
         BigDecimal amountToTransfer = transaction.getAmount();
         accountFrom.setAvailableAmount(accountFrom.getAvailableAmount().subtract(amountToTransfer));
         accountTo.setAvailableAmount(accountTo.getAvailableAmount().add(amountToTransfer));
 
-        return new Transaction(accountFrom, accountTo, amountToTransfer);
+        return new Transaction(accountFrom, accountTo, amountToTransfer, transactionUUID);
     }
 
     @Override
