@@ -13,7 +13,7 @@ public class TransactionManagerTask implements Runnable {
         this.accounts = accounts;
     }
 
-    public void perform() {
+    public synchronized void perform() {
         t = Thread.currentThread();
         if (Main.counter.get() == 0) {
             return;
@@ -21,25 +21,38 @@ public class TransactionManagerTask implements Runnable {
 
         Account acc1 = getRandomAvailableAccount();
         Account acc2 = getRandomAvailableAccount();
-        while (true) {
-            if (acc1.getAccountId() == acc2.getAccountId()) {
-                acc2.getSemaphore().release();
-                acc2 = getRandomAvailableAccount();
-            } else {
-                break;
-            }
-        }
+
         AccountsAndAmounts accountsAndAmount = getAvailableMoneyToTransfer(acc1, acc2);
         Transaction transaction = performTranscation(accountsAndAmount);
 
-        System.out.println("Thread: " + t.getName() + "\n" + "Counter: " + Main.counter.decrementAndGet());
+        acc1.getSemaphore().release();
+        acc2.getSemaphore().release();
     }
 
     private Account getRandomAvailableAccount() {
         int size = accounts.size();
-        int randomAccountNumber = ThreadLocalRandom.current().nextInt(0, size - 1);
-        Account account = accounts.get(randomAccountNumber);
-        account.getSemaphore().acquireUninterruptibly();
+        Account account = null;
+
+        boolean notAcquired = true;
+        while (notAcquired) {
+            int randomAccountNumber = ThreadLocalRandom.current().nextInt(0, size - 1);
+            account = accounts.get(randomAccountNumber);
+            try {
+                if (account.getSemaphore().availablePermits() == 1) {
+                    account.getSemaphore().acquire();
+                } else {
+                    continue;
+                }
+                System.out.println("Acquiring lock in thread: " + t.getName() + "\nOn account id: " + account.getAccountId() + "\n");
+                System.out.println("Thread: " + t.getName() + "\n" + "Counter: " + Main.counter.decrementAndGet());
+                notAcquired = false;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+
         return account;
     }
 
