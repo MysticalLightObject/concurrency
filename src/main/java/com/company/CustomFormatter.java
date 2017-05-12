@@ -9,13 +9,13 @@ public class CustomFormatter {
     public static String format(Transaction trBefore, Transaction trDone, BigDecimal initialAmountFrom, BigDecimal initialAmountTo) {
         StringBuilder sb = new StringBuilder();
         Formatter formatter = new Formatter(sb, Locale.US);
-        String headerFormat = "\n%-20s %-40s %-40s\n";
-        String secondHeaderFormat = "%-20s %-20s %-20s %-20s %-20s\n";
-        String accountIdFormat = "%-20s %-20d %-20d %-20d %-20d\n";
-        String accountOwnerFormat = "%-20s %-20s %-20s %-20s %-20s\n";
-        String accountAmountFormat = "%-20s %-20.2f %-20.2f %-20.2f %-20.2f\n";
-        String totalTransferredFormat = "%-20s %-80.2f\n";
-        String transactionUUIDFormat = "%-20s %s";
+        String headerFormat = "\n|%-20s |%-42s |%-40s\n";
+        String secondHeaderFormat = "|%-20s |%-20s |%-20s |%-20s |%-20s\n";
+        String accountIdFormat = "|%-20s |%-20d |%-20d |%-20d |%-20d\n";
+        String accountOwnerFormat = "|%-20s |%-20s |%-20s |%-20s |%-20s\n";
+        String accountAmountFormat = "|%-20s |%-20.2f |%-20.2f |%-20.2f |%-20.2f\n";
+        String totalTransferredFormat = "|%-20s |%-80.2f\n";
+        String transactionUUIDFormat = "|%-20s |%s\n";
 
         formatter.format(headerFormat, "STAT", "FROM ACCOUNT", "TO ACCOUNT");
         formatter.format(secondHeaderFormat, "------", "Before", "After", "Before", "After");
