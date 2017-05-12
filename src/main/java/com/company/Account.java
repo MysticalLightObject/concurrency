@@ -34,4 +34,13 @@ public class Account {
         return this.semaphore;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Account id: " + accountId);
+        sb.append("\nOwner name: " + ownerName);
+        sb.append("\nAvailable amount: " + availableAmount.setScale(2, BigDecimal.ROUND_DOWN));
+        return sb.toString();
+    }
+
 }

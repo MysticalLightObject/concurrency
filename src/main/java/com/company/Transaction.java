@@ -8,7 +8,7 @@ public class Transaction {
     private BigDecimal amount;
     private String uuid;
 
-    public String getId() {
+    public String getUUID() {
         return uuid;
     }
 

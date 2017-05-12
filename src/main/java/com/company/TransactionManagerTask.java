@@ -1,6 +1,9 @@
 package com.company;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -9,6 +12,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class TransactionManagerTask implements Runnable {
     private Thread t;
     private ArrayList<Account> accounts;
+    private static final Logger logger = LoggerFactory.getLogger(TransactionManagerTask.class);
 
     public TransactionManagerTask(ArrayList<Account> accounts) {
         this.accounts = accounts;
@@ -19,14 +23,20 @@ public class TransactionManagerTask implements Runnable {
         if (Main.counter.get() <= 0) {
             return;
         }
-        int andDecrement = Main.counter.getAndDecrement();
-        System.out.println("Counter: " + andDecrement);
+        Main.counter.getAndDecrement();
 
         Account acc1 = getRandomAvailableAccount();
         Account acc2 = getRandomAvailableAccount();
 
-        Transaction transaction = getAvailableMoneyToTransfer(acc1, acc2);
-        performTranscation(transaction);
+        Transaction trBefore = getAvailableMoneyToTransfer(acc1, acc2);
+        BigDecimal initialAmountFrom = trBefore.getFromAccount().getAvailableAmount();
+        BigDecimal initialAmountTo = trBefore.getToAccount().getAvailableAmount();
+
+        Transaction trDone = performTranscation(trBefore);
+
+        String output = CustomFormatter.format(trBefore, trDone, initialAmountFrom, initialAmountTo);
+        logger.info(output);
+
 
         acc1.getSemaphore().release();
         acc2.getSemaphore().release();
