@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
-    public static final Path pathToAccounts = Paths.get("/home/mike/IdeaProjects/ConcurrecyPractice/src/main/resources/accounts/");
+    public static final Path pathToAccounts = Paths.get("build/resources/main/accounts/");
     public static AtomicInteger counter = new AtomicInteger(50);
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
     private static int threadCount = 8;
